@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>반복문</title>
+</head>
+<body>
+    <script>
+        let width = 200
+        
+        //반복문으로 width의 초기값 200을 일정한 간격으로 조정
+        // for(초기값(값 있으면 세미콜론만 가능, 새로운 값 입력하면 기존값 무시);조건식;증가 또는 감소식)
+        for(width=100;width<400;width=width+50) {
+            //반복 실행해야할 명령문들
+            document.write('width:',width,'<br>')
+            // 더이상 실행할 명령어 없으면 for로 이동
+            // 증가 또는 감소 명령실행 -> 조건식 검사 -> 참이면 17번 반복할 명령들 다시 실행
+            //                                      거짓이면 for를 중단(22번으로 나감)
+        }
+        document.write('<hr>')
+        for(width=500;width<400; width+=50) { // += 라는 축약 기호 사용
+            document.write('width:',width,'<br>')
+        } 
+
+        // 문제 : 500, 450, 400, 350, 300 순서대로 출력하기
+        document.write('<hr>')
+        for(width=500;width>=300; width-=50) {
+            document.write('width:',width,'<br>')
+        }
+
+        document.write('<hr>')
+        let max = prompt('몇 라인 출력하나요?') // alert('메시지') confirm('메시지')
+        for(let i=1;i<=max;i++) // i=i+1 축약
+            document.write('❤'.repeat(i),'<br>') // repeat(i) : 문자열을 i만큼 반복하는 문자열의 매소드
+    </script>
+
+</body>
+</html>
