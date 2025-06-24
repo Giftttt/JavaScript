@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>박스 이동하기</title>
+    <style>
+        html, body {
+            padding: 0px;
+            margin: 0; /* body의 기본 마진 제거 */
+        }
+        div.nav > button {
+            width: 60px;
+            height: 60px;
+        }
+        div.nav {
+            height: 100px;
+            background-color: aqua;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        div#box {
+            width: 150px;
+            height: 150px;
+            background-color: cadetblue;
+            position: absolute; /* box 요소의 좌표(위치) 변경하기 위함*/
+            /* 초기 위치 설정 (선택 사항이지만 absolute에는 필수적) */
+            top: 100px; /* nav 아래에서 시작 */
+            left: 50%;
+            transform: translateX(-50%); /* 초기 가로 중앙 정렬 */
+        }
+        div.main {
+            background-color: antiquewhite;
+            height: calc(100vh - 100px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* main이 absolute box의 기준이 되도록 position: relative; 추가 */
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="nav" id="nav">
+            <button id="topBtn">👆</button>
+            <button id="downBtn">👇</button>
+            <button id="leftBtn">👈</button>
+            <button id="rightBtn">👉</button>
+        </div>
+        <div class="main">
+            <div id="box"></div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const box = document.getElementById('box');
+        const mainDiv = document.querySelector('.main'); // main div 요소를 가져옵니다.
+
+        // 초기 위치와 크기 설정 (CSS에서 설정해도 됨)
+        // box.style.left = '50%'; // 초기 가로 위치
+        // box.style.transform = 'translateX(-50%)'; // 가로 중앙 정렬
+        // box.style.top = '100px'; // nav 아래에서 시작
+
+        document.body.addEventListener('keydown', e => {
+            console.log('이벤트정보', e);
+            let currentLeft = box.offsetLeft;
+            let currentTop = box.offsetTop;
+            const boxWidth = box.offsetWidth;
+            const boxHeight = box.offsetHeight;
+
+            // mainDiv의 위치와 크기 (상대 위치로 설정했기 때문에 offsetLeft/Top이 0일 수 있습니다)
+            // box의 position이 absolute이므로, 부모인 mainDiv의 position이 relative일 때,
+            // box의 top/left는 mainDiv를 기준으로 합니다.
+            // 따라서 mainDiv의 내부 경계는 0부터 mainDiv의 크기까지로 간주할 수 있습니다.
+            // mainDiv에 position: relative;를 추가하여 박스의 기준을 mainDiv로 변경했습니다.
+            const mainWidth = mainDiv.offsetWidth;
+            const mainHeight = mainDiv.offsetHeight;
+
+            // box의 현재 위치는 mainDiv 내부를 기준으로 하기 위해
+            // offsetLeft/Top에서 mainDiv의 offsetLeft/Top을 빼줍니다.
+            // CSS에서 position: relative;를 mainDiv에 추가했으므로,
+            // box.offsetLeft/Top은 이제 mainDiv 내부 기준 좌표가 됩니다.
+            // 만약 mainDiv에 position: relative;를 추가하지 않았다면
+            // currentLeft = box.getBoundingClientRect().left - mainDiv.getBoundingClientRect().left;
+            // currentTop = box.getBoundingClientRect().top - mainDiv.getBoundingClientRect().top;
+            // 와 같이 계산해야 합니다.
+            // 하지만 CSS에 position: relative; mainDiv에 추가하는 것이 더 간단합니다.
+
+            switch (e.key) {
+                case 'ArrowUp':
+                    console.log('방향 위를 눌렀습니다.');
+                    // box의 상단이 mainDiv의 상단(0)보다 크거나 같아야 함
+                    if (currentTop - 10 >= 0) {
+                        box.style.top = (currentTop - 10) + 'px';
+                    } else {
+                        box.style.top = '0px'; // 최소 경계로 설정
+                    }
+                    break;
+                case 'ArrowDown':
+                    console.log('방향 밑을 눌렀습니다.');
+                    // box의 아래쪽 끝이 mainDiv의 아래쪽 끝보다 작거나 같아야 함
+                    if (currentTop + boxHeight + 10 <= mainHeight) {
+                        box.style.top = (currentTop + 10) + 'px';
+                    } else {
+                        box.style.top = (mainHeight - boxHeight) + 'px'; // 최대 경계로 설정
+                    }
+                    break;
+                case 'ArrowRight':
+                    console.log('방향 오른쪽을 눌렀습니다.');
+                    // box의 오른쪽 끝이 mainDiv의 오른쪽 끝보다 작거나 같아야 함
+                    if (currentLeft + boxWidth + 10 <= mainWidth) {
+                        box.style.left = (currentLeft + 10) + 'px';
+                    } else {
+                        box.style.left = (mainWidth - boxWidth) + 'px'; // 최대 경계로 설정
+                    }
+                    break;
+                case 'ArrowLeft':
+                    console.log('방향 왼쪽을 눌렀습니다.');
+                    // box의 왼쪽이 mainDiv의 왼쪽(0)보다 크거나 같아야 함
+                    if (currentLeft - 10 >= 0) {
+                        box.style.left = (currentLeft - 10) + 'px';
+                    } else {
+                        box.style.left = '0px'; // 최소 경계로 설정
+                    }
+                    break;
+            }
+        });
+
+        // 버튼 클릭 이벤트 리스너 (박스 크기 조절)
+        container.addEventListener('click', function(event) {
+            if (event.target.tagName === 'BUTTON') {
+                console.log("이벤트 타입:", event.type);
+                console.log("클릭한 위치:", event.clientX, event.clientY);
+                console.log("클릭한 요소 이름:", event.target.id);
+
+                let currentWidth = box.offsetWidth;
+                let currentHeight = box.offsetHeight;
+
+                // 최소/최대 크기 제한
+                const minSize = 50;
+                const maxSize = Math.min(mainDiv.offsetWidth, mainDiv.offsetHeight); // mainDiv 크기 안에서 제한
+
+                switch (event.target.id) { // switch 문으로 변경하여 가독성 높임
+                    case 'topBtn': // 높이 줄이기
+                        console.log('박스가 작아집니다.(높이)');
+                        if (currentHeight - 10 >= minSize) {
+                            box.style.height = (currentHeight - 10) + 'px';
+                        }
+                        break;
+                    case 'downBtn': // 높이 늘리기
+                        console.log('박스가 커집니다.(높이)');
+                        if (currentHeight + 10 <= maxSize) { // mainDiv 높이 안에서 제한
+                            box.style.height = (currentHeight + 10) + 'px';
+                        }
+                        break;
+                    case 'leftBtn': // 너비 줄이기
+                        console.log('박스가 작아집니다.(너비)');
+                        if (currentWidth - 10 >= minSize) {
+                            box.style.width = (currentWidth - 10) + 'px';
+                        }
+                        break;
+                    case 'rightBtn': // 너비 늘리기
+                        console.log('박스가 커집니다.(너비)');
+                        if (currentWidth + 10 <= maxSize) { // mainDiv 너비 안에서 제한
+                            box.style.width = (currentWidth + 10) + 'px';
+                        }
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
