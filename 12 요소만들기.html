@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .blue{
+            color: blue;
+        }
+        .w500 {
+            font-weight: 500;
+        }
+
+        /* 가상요소 :: */
+        ul#twice2 > li::before, 
+        ul#twice2 > li::after
+         {
+            content: '😀';
+            font-size: 0.8rem;
+            vertical-align: middle;
+        }
+    </style>
+    <!-- defer 속성 : head 안의 script는 body 안의 태그 요소를
+                    모두 생성한 후에 실행되도록 함 
+    -->
+    <script src="./js/12ex.js" defer></script>
+</head>
+
+<body>
+    <ul id="twice2"></ul>
+    <!-- li 요소를 명령어로 만들 예정 -->
+
+</body>
+
+</html>
